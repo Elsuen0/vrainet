@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VraiNet — Combien est vraiment à toi sur chaque virement ?</title>
+<meta name="description" content="Pour micro-entrepreneurs : à chaque virement reçu, VraiNet calcule URSSAF, impôt, TVA, matelas et ce que tu peux vraiment dépenser. Gratuit, sans compte, données sur ton appareil.">
+<meta name="theme-color" content="#f1f4f3">
+<meta property="og:title" content="VraiNet — Ce virement, combien est vraiment à toi ?">
+<meta property="og:description" content="Le calculateur des micro-entrepreneurs : URSSAF, impôt, TVA, matelas et reste à dépenser, au centime près.">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="light dark">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400..700&display=swap">
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+
+<div class="page" id="page">
+  <header class="top">
+    <div class="brand">
+      <h1>Vrai<span style="color:var(--accent)">Net</span></h1>
+      <p>Ce virement, combien est vraiment à toi ?</p>
+    </div>
+    <div class="top-tools">
+      <span class="sync" id="sync" data-etat="attente"><i></i><span id="sync-txt">Connexion à ton compte…</span></span>
+      <button type="button" class="btn-ghost" id="btn-masque" aria-pressed="false">Masquer les montants</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="calc" aria-labelledby="h-calc">
+      <h2 class="eyebrow" id="h-calc">Virement reçu</h2>
+      <div class="montant-wrap">
+        <div class="montant-row">
+          <input id="montant" type="text" inputmode="decimal" autocomplete="off" aria-label="Montant du virement en euros" placeholder="0" value="1 500">
+          <span aria-hidden="true">€</span>
+        </div>
+        <p class="exemple" id="exemple">Montant d'exemple : remplace-le par celui de ton virement.</p>
+      </div>
+      <div class="champs">
+        <div class="field"><label for="date">Date d'encaissement</label><input id="date" type="date"></div>
+        <div class="field"><label for="libelle">Client ou libellé</label><input id="libelle" type="text" maxlength="80" placeholder="Ex. site vitrine, acompte"></div>
+        <div class="field"><label for="activite">Type de prestation</label>
+          <select id="activite">
+            <option value="bnc">Libérale (BNC)</option>
+            <option value="bic_serv">Commerciale ou artisanale (BIC)</option>
+            <option value="bic_vente">Vente de marchandises (BIC)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="verdict" aria-live="polite">
+        <div class="toi"><span class="eyebrow">À toi</span><strong id="v-toi">—</strong></div>
+        <div class="due"><span class="eyebrow">Pas à toi, à mettre de côté</span><strong id="v-due">—</strong></div>
+      </div>
+
+      <div class="decoupe">
+        <div class="accolades" id="accolades" aria-hidden="true"></div>
+        <div class="barre" id="barre" role="img" aria-label="Découpe du virement par destination"></div>
+      </div>
+
+      <div class="ledger">
+        <div><h3>Pas à toi</h3><ul id="lg-due"></ul></div>
+        <hr class="perfo">
+        <div><h3>À toi</h3><ul id="lg-toi"></ul></div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn" id="btn-save">Enregistrer ce virement</button>
+        <span class="toast" id="toast" role="status" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <aside class="side" aria-label="Où tu en es">
+      <section class="blk" id="blk-urssaf"><h2>URSSAF</h2><div id="urssaf-body"></div></section>
+      <section class="blk"><h2 id="h-ca">Chiffre d'affaires</h2><div id="ca-body"></div></section>
+      <section class="blk"><h2 id="h-cumul">Cumul</h2><div id="cumul-body"></div></section>
+      <section class="blk"><h2>Matelas de sécurité</h2><div id="matelas-body"></div></section>
+    </aside>
+  </main>
+
+  <section class="journal" aria-labelledby="h-journal">
+    <h2 id="h-journal">Journal des virements</h2>
+    <div id="journal-body"></div>
+  </section>
+
+  <details class="reglages" id="reglages">
+    <summary>Réglages <span>statut, impôt, TVA, règles de répartition, taux</span></summary>
+    <div class="rg">
+      <fieldset>
+        <legend>Ton statut</legend>
+        <div class="cols">
+          <div class="field"><label for="set-activite">Prestation par défaut</label>
+            <select id="set-activite"><option value="bnc">Libérale (BNC)</option><option value="bic_serv">Commerciale ou artisanale (BIC)</option><option value="bic_vente">Vente de marchandises (BIC)</option></select>
+            <small>Celle de ta ligne de déclaration URSSAF. Tu peux la changer virement par virement.</small></div>
+          <div class="field"><label for="set-periodicite">Déclaration URSSAF</label>
+            <select id="set-periodicite"><option value="trimestre">Trimestrielle</option><option value="mois">Mensuelle</option></select></div>
+          <div class="field"><label for="set-ca">CA annuel estimé (€)</label><input id="set-ca" type="number" min="0" step="100" inputmode="decimal">
+            <small>Sert à estimer l'impôt au barème et à lisser la CFE.</small></div>
+          <div class="field"><label for="set-cfe">CFE annuelle (€)</label><input id="set-cfe" type="number" min="0" step="1" inputmode="decimal">
+            <small>Montant de ton dernier avis. 0 si tu en es exonéré.</small></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Impôt sur le revenu</legend>
+        <div class="cols">
+          <div class="field"><label for="set-ir">Mode</label>
+            <select id="set-ir"><option value="vl">Versement libératoire</option><option value="bareme">Barème, provision estimée</option><option value="manuel">Barème, taux de provision choisi</option></select></div>
+          <div class="field" data-si="bareme"><label for="set-situation">Foyer</label>
+            <select id="set-situation"><option value="seul">Personne seule</option><option value="couple">Couple, imposition commune</option></select></div>
+          <div class="field" data-si="bareme"><label for="set-parts">Nombre de parts</label><input id="set-parts" type="number" min="1" step="0.5" inputmode="decimal"></div>
+          <div class="field" data-si="bareme"><label for="set-autres">Autres revenus imposables du foyer (€)</label><input id="set-autres" type="number" min="0" step="100" inputmode="decimal">
+            <small>Après abattement, hors micro-entreprise.</small></div>
+          <div class="field" data-si="manuel"><label for="set-irmanuel">Provision (% du CA)</label><input id="set-irmanuel" type="number" min="0" step="0.1" inputmode="decimal"></div>
+        </div>
+        <p class="info" id="ir-info"></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>TVA</legend>
+        <div class="cols">
+          <div class="field check"><input id="set-tva" type="checkbox"><label for="set-tva">Je facture la TVA (mes virements sont TTC)</label></div>
+          <div class="field" data-si="tva"><label for="set-tauxtva">Taux de TVA (%)</label><input id="set-tauxtva" type="number" min="0" step="0.1" inputmode="decimal"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Répartition de ce qui est à toi</legend>
+        <div class="cols">
+          <div class="field"><label for="set-w-salaire">À te verser (%)</label><input id="set-w-salaire" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label for="set-w-securite">Matelas de sécurité (%)</label><input id="set-w-securite" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label for="set-w-invest">Investissement (%)</label><input id="set-w-invest" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label for="set-w-pro">Budget pro (%)</label><input id="set-w-pro" type="number" min="0" step="1" inputmode="decimal"></div>
+        </div>
+        <p class="info" id="split-info"></p>
+        <div class="cols">
+          <div class="field"><label for="set-matelas-cible">Objectif du matelas (€)</label><input id="set-matelas-cible" type="number" min="0" step="100" inputmode="decimal">
+            <small>Une fois atteint, sa part passe en investissement.</small></div>
+          <div class="field"><label for="set-matelas-deja">Déjà constitué avant VraiNet (€)</label><input id="set-matelas-deja" type="number" min="0" step="100" inputmode="decimal"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Taux appliqués</legend>
+        <div class="taux-wrap">
+          <table class="taux">
+            <thead><tr><th>Prestation</th><th>Cotisations %</th><th>Formation (CFP) %</th><th>Versement libératoire %</th><th>Abattement fiscal %</th></tr></thead>
+            <tbody id="taux-body"></tbody>
+          </table>
+        </div>
+      </fieldset>
+    </div>
+  </details>
+
+  <p class="pied">Taux 2026 vérifiés le 2 octobre 2026 : cotisations et versement libératoire micro-entrepreneur, seuils de franchise de TVA, plafond du régime micro, barème de l'impôt 2026 (revenus 2025). L'estimation au barème ignore le plafonnement du quotient familial, les réductions et les crédits d'impôt. Les réglages changés ne modifient pas les virements déjà enregistrés. Outil de pilotage, pas un conseil fiscal. Tes montants restent dans ton navigateur : rien n'est envoyé à un serveur. Seule la fréquentation du site est mesurée (Vercel Analytics, anonyme, sans cookie).</p>
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
