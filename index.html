@@ -31,48 +31,63 @@
   </header>
 
   <main class="grid">
-    <section class="calc" aria-labelledby="h-calc">
-      <h2 class="eyebrow" id="h-calc">Virement reçu</h2>
-      <div class="montant-wrap">
-        <div class="montant-row">
-          <input id="montant" type="text" inputmode="decimal" autocomplete="off" aria-label="Montant du virement en euros" placeholder="0" value="1 500">
-          <span aria-hidden="true">€</span>
+    <div class="principal">
+      <section class="calc" aria-labelledby="h-calc">
+        <h2 class="eyebrow" id="h-calc">Virement reçu</h2>
+        <div class="montant-wrap">
+          <div class="montant-row">
+            <input id="montant" type="text" inputmode="decimal" autocomplete="off" aria-label="Montant du virement en euros" placeholder="0" value="1 500">
+            <span aria-hidden="true">€</span>
+          </div>
+          <p class="exemple" id="exemple">Montant d'exemple : remplace-le par celui de ton virement.</p>
         </div>
-        <p class="exemple" id="exemple">Montant d'exemple : remplace-le par celui de ton virement.</p>
-      </div>
-      <div class="champs">
-        <div class="field"><label for="date">Date d'encaissement</label><input id="date" type="date"></div>
-        <div class="field"><label for="libelle">Client ou libellé</label><input id="libelle" type="text" maxlength="80" placeholder="Ex. site vitrine, acompte"></div>
-        <div class="field"><label for="activite">Type de prestation</label>
-          <select id="activite">
-            <option value="bnc">Libérale (BNC)</option>
-            <option value="bic_serv">Commerciale ou artisanale (BIC)</option>
-            <option value="bic_vente">Vente de marchandises (BIC)</option>
-          </select>
+        <div class="champs">
+          <div class="field"><label for="date">Date d'encaissement</label><input id="date" type="date"></div>
+          <div class="field"><label for="libelle">Client ou libellé</label><input id="libelle" type="text" maxlength="80" placeholder="Ex. site vitrine, acompte"></div>
+          <div class="field"><label for="activite">Type de prestation</label>
+            <select id="activite">
+              <option value="bnc">Libérale (BNC)</option>
+              <option value="bic_serv">Commerciale ou artisanale (BIC)</option>
+              <option value="bic_vente">Vente de marchandises (BIC)</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div class="verdict" aria-live="polite">
-        <div class="toi"><span class="eyebrow">À toi</span><strong id="v-toi">—</strong></div>
-        <div class="due"><span class="eyebrow">Pas à toi, à mettre de côté</span><strong id="v-due">—</strong></div>
-      </div>
+        <div class="verdict" aria-live="polite">
+          <div class="toi"><span class="eyebrow">À toi</span><strong id="v-toi">—</strong></div>
+          <div class="due"><span class="eyebrow">Pas à toi, à mettre de côté</span><strong id="v-due">—</strong></div>
+        </div>
 
-      <div class="decoupe">
-        <div class="accolades" id="accolades" aria-hidden="true"></div>
-        <div class="barre" id="barre" role="img" aria-label="Découpe du virement par destination"></div>
-      </div>
+        <div class="decoupe">
+          <div class="accolades" id="accolades" aria-hidden="true"></div>
+          <div class="barre" id="barre" role="img" aria-label="Découpe du virement par destination"></div>
+        </div>
 
-      <div class="ledger">
-        <div><h3>Pas à toi</h3><ul id="lg-due"></ul></div>
-        <hr class="perfo">
-        <div><h3>À toi</h3><ul id="lg-toi"></ul></div>
-      </div>
+        <div class="ledger">
+          <div><h3>Pas à toi</h3><ul id="lg-due"></ul></div>
+          <hr class="perfo">
+          <div><h3>À toi</h3><ul id="lg-toi"></ul></div>
+        </div>
 
-      <div class="actions">
-        <button type="button" class="btn" id="btn-save">Enregistrer ce virement</button>
-        <span class="toast" id="toast" role="status" aria-live="polite"></span>
-      </div>
-    </section>
+        <div class="actions">
+          <button type="button" class="btn" id="btn-save">Enregistrer ce virement</button>
+          <span class="toast" id="toast" role="status" aria-live="polite"></span>
+        </div>
+      </section>
+
+      <section class="inscription" id="inscription" aria-labelledby="h-ins" hidden>
+        <h2 id="h-ins">Les taux bougent tous les ans</h2>
+        <p id="ins-texte">Laisse ton email : je te préviens quand VraiNet est mis à jour (cotisations, seuils de TVA, barème) et quand je sors un nouvel outil pour freelances.</p>
+        <form id="ins-form" novalidate>
+          <label class="vh" for="ins-email">Ton adresse email</label>
+          <input id="ins-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" maxlength="120" placeholder="ton@email.fr" required>
+          <input id="ins-piege" name="botcheck" type="checkbox" tabindex="-1" autocomplete="off" hidden>
+          <button type="submit" id="ins-btn">Me prévenir</button>
+        </form>
+        <p class="ins-etat" id="ins-etat" role="status" aria-live="polite"></p>
+        <small id="ins-note">Pas de spam, pas de revente. Tu te désinscris en répondant STOP à n'importe quel message.</small>
+      </section>
+    </div>
 
     <aside class="side" aria-label="Où tu en es">
       <section class="blk" id="blk-urssaf"><h2>URSSAF</h2><div id="urssaf-body"></div></section>
@@ -156,11 +171,12 @@
     </div>
   </details>
 
-  <p class="pied">Taux 2026 vérifiés le 2 octobre 2026 : cotisations et versement libératoire micro-entrepreneur, seuils de franchise de TVA, plafond du régime micro, barème de l'impôt 2026 (revenus 2025). L'estimation au barème ignore le plafonnement du quotient familial, les réductions et les crédits d'impôt. Les réglages changés ne modifient pas les virements déjà enregistrés. Outil de pilotage, pas un conseil fiscal. Tes montants restent dans ton navigateur : rien n'est envoyé à un serveur. Seule la fréquentation du site est mesurée (Vercel Analytics, anonyme, sans cookie).</p>
+  <p class="pied">Taux 2026 vérifiés le 2 octobre 2026 : cotisations et versement libératoire micro-entrepreneur, seuils de franchise de TVA, plafond du régime micro, barème de l'impôt 2026 (revenus 2025). L'estimation au barème ignore le plafonnement du quotient familial, les réductions et les crédits d'impôt. Les réglages changés ne modifient pas les virements déjà enregistrés. Outil de pilotage, pas un conseil fiscal. Tes montants restent dans ton navigateur : aucun n'est envoyé à un serveur. Si tu laisses ton email, lui seul est transmis (via Web3Forms) à Lucas, qui développe VraiNet, pour t'écrire. La fréquentation du site est mesurée (Vercel Analytics, anonyme, sans cookie).</p>
 </div>
 
 <script src="js/core.js"></script>
 <script src="js/app.js"></script>
+<script src="js/inscription.js"></script>
 
 </body>
 </html>
